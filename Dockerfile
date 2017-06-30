@@ -117,4 +117,4 @@ RUN cd ~/ && \
 ###############################################################################
 RUN apt-get clean &&apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-CMD /bin/sh
+CMD /bin/bash
