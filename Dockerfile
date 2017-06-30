@@ -1,3 +1,7 @@
+FROM ubuntu
+ENV DEBIAN_FRONTEND=noninteractive
+
+
 ###############################################################################
 # Dockerfile for https://github.com/ppwwyyxx/speaker-recognition
 # -----------------------------------------------------------------------------
@@ -8,12 +12,12 @@
 # * An image is a lightweight, stand-alone, executable package that includes 
 #   everything needed to run a piece of software, including the code, a runtime,
 #   libraries, environment variables, and config files.
-# * A container is a runtime instance of an image â€“ what the image becomes in
+# * A container is a runtime instance of an image – what the image becomes in
 #   memory when actually executed. It runs completely isolated from the host 
 #   environment by default, only accessing host files and ports if configured 
 #   to do so.
 #
-# Containers run apps natively on the host machineâ€™s kernel. 
+# Containers run apps natively on the host machine’s kernel. 
 # They have better performance than virtual machines that only get virtual
 # access to host resources through a hypervisor. 
 # Images or containers can easily be exchanged and many users publish images in
@@ -39,22 +43,17 @@
 # Run a stopped container
 # > docker start -ai speaker-recognitionInstance
 # 
-# Run the speaker_recognition.py directly thorough the configured entry point
-# > docker run -v local_path:remote_path speaker-recognition
-#
 # List information
 # > docker images                 All docker images
 # > docker ps -a                  All docker containers (running or not: -a)
 #
 ###############################################################################
-# BASE IMAGE
-FROM ubuntu
-ENV DEBIAN_FRONTEND=noninteractive
+
 
 # Prepare package management
 ###############################################################################
 RUN apt-get update && \
-    apt-get install -y nano sudo tzdata apt-utils && \
+    apt-get install -y nano sudo tzdata apt-utils libtiff5 libtiff-dev libgif-dev libpng-dev && \
     apt-get -y dist-upgrade
 
 
@@ -90,8 +89,7 @@ RUN apt-get update && apt-get install -y python python-pip && \
 # Base Dependencies
 ###############################################################################
 RUN apt-get install -y portaudio19-dev libopenblas-base libopenblas-dev pkg-config git-core cmake python-dev liblapack-dev libatlas-base-dev libblitz0-dev libboost-all-dev libhdf5-serial-dev libqt4-dev libsvm-dev libvlfeat-dev  python-nose python-setuptools python-imaging build-essential libmatio-dev python-sphinx python-matplotlib python-scipy
-# additional dependencies for bob
-RUN apt-get install -y libfftw3-dev libtiff5-dev libgif-dev libpng-dev libjpeg-dev
+
 
 # Spear
 # https://gitlab.idiap.ch/bob/bob/wikis/Dependencies
@@ -119,6 +117,4 @@ RUN cd ~/ && \
 ###############################################################################
 RUN apt-get clean &&apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Entrypoint - so `docker run speaker-recognition` will automatically run the python main
-###############################################################################
-ENTRYPOINT ["/usr/bin/python", "/root/speaker-recognition/src/speaker-recognition.py"]
+CMD /bin/sh
